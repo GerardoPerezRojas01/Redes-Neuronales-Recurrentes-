@@ -1,1 +1,2 @@
 # Redes-Neuronales-Recurrentes-
+En este proyecto se utilizó una red neuronal recurrente, específicamente una variante LSTM. Las LSTM son un tipo de RNN diseñadas para manejar secuencias de datos y capturar dependencias a largo plazo, lo que es fundamental para modelar series temporales como las que se presentan en el dataset. Esta arquitectura permite que el modelo mantenga información relevante de pasos previos y, junto con el optimizador Adam, facilita una convergencia estable y rápida durante el entrenamiento.
