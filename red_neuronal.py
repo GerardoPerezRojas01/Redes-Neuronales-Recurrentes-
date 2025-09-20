@@ -1,7 +1,7 @@
 import numpy as np
-import src.activaciones as act
-import src.costos as c
-import src.optimizadores as op
+import activaciones as act
+import costos as c
+import optimizadores as op
 
 
 def inicializar_RNA(capas):
@@ -35,11 +35,27 @@ def propagacion_adelante(X, parametros, activaciones):
 
     return A, valor_capas
 
-def retropropagacion(P, T, parametros, valor_capas, derivada_costo):
+def retropropagacion(
+    P,
+    T,
+    parametros,
+    valor_capas,
+    derivada_costo=None,
+    gradiente_salida=None,
+    retornar_gradiente_entrada=False,
+):
     L = len(parametros) // 2
     derivadas = {}
 
-    delta = derivada_costo(T, P) * valor_capas[f'da/dz{L}']
+    if gradiente_salida is None:
+        if derivada_costo is None:
+            raise ValueError(
+                'Se requiere una derivada del costo o un gradiente de salida '
+                'para iniciar la retropropagación.'
+            )
+        gradiente_salida = derivada_costo(T, P)
+
+    delta = gradiente_salida * valor_capas[f'da/dz{L}']
     derivadas[f'dW{L}'] = np.matmul(valor_capas[f'a{L-1}'].transpose(), delta)
     derivadas[f'db{L}'] = np.sum(delta, axis=0, keepdims=True)
 
@@ -48,6 +64,10 @@ def retropropagacion(P, T, parametros, valor_capas, derivada_costo):
         delta = np.matmul(delta, W.transpose()) * valor_capas[f'da/dz{l}']
         derivadas[f'dW{l}'] = np.matmul(valor_capas[f'a{l-1}'].transpose(), delta)
         derivadas[f'db{l}'] = np.sum(delta, axis=0, keepdims=True)
+
+    if retornar_gradiente_entrada:
+        gradiente_entrada = np.matmul(delta, parametros['W1'].transpose())
+        return derivadas, gradiente_entrada
 
     return derivadas
 
