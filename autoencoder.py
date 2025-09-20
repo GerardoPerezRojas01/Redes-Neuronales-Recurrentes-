@@ -1,5 +1,5 @@
 import numpy as np
-import src.activaciones as act
+import activaciones as act
 
 def codificador(X, parametros, activaciones):
     medio = len(activaciones) // 2
